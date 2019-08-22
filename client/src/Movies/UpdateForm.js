@@ -3,7 +3,7 @@ import axios from "axios";
 
 const UpdateForm = props => {
   console.log("PROPS IN UPDATE FORM", props);
-  const [updatedInfo, setUpdatedInfo] = useState({});
+  const [updatedInfo, setUpdatedInfo] = useState([]);
 
   console.log(props.match.params.id);
 
@@ -16,12 +16,19 @@ const UpdateForm = props => {
       });
   }, []);
 
-  console.log("UPDATED INFO ARRAY", updatedInfo);
-
   const handleChange = e => {
     setUpdatedInfo({
       ...updatedInfo,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleChangeStars = (e, index) => {
+    const newStars = [...updatedInfo.stars];
+    newStars[index] = e.target.value;
+    setUpdatedInfo({
+      ...updatedInfo,
+      stars: newStars
     });
   };
 
@@ -41,6 +48,10 @@ const UpdateForm = props => {
       .catch(err => console.log(err));
   };
 
+  console.log("UPDATED INFO ARRAY", updatedInfo);
+  if (!updatedInfo.stars) {
+    return <p>Loading...</p>;
+  }
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -65,13 +76,25 @@ const UpdateForm = props => {
           onChange={handleChange}
           placeholder="Metascore"
         />
-        <input
+        {updatedInfo.stars.map((star, index) => {
+          return (
+            <div>
+              <input
+                type="text"
+                name="stars"
+                value={updatedInfo.stars[index]}
+                onChange={e => handleChangeStars(e, index)}
+              />
+            </div>
+          );
+        })}
+        {/* <input
           type="text"
           name="actors"
           value={updatedInfo.actors}
           onChange={handleChange}
           placeholder="Actors"
-        />
+        /> */}
         <button>Submit</button>
       </form>
     </>
